@@ -1,56 +1,56 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Loader2, RefreshCw } from "lucide-react"
-import Prism from "prismjs"
-import "prismjs/themes/prism-tomorrow.css"
-import "prismjs/components/prism-jsx"
-import "prismjs/components/prism-css"
-import "prismjs/components/prism-markup"
+import { useState, useEffect } from "react";
+import { Loader2, RefreshCw } from "lucide-react";
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.css";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-markup";
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { generateCode } from "./actions"
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { generateCode } from "./actions";
 
 export function CodeCreator() {
-  const [code, setCode] = useState("")
-  const [preview, setPreview] = useState<string>("")
-  const [error, setError] = useState<string>("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [codeType, setCodeType] = useState<"react" | "html">("react")
+  const [code, setCode] = useState("");
+  const [preview, setPreview] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [codeType, setCodeType] = useState<"react" | "html">("react");
 
   useEffect(() => {
     if (code) {
-      Prism.highlightAll()
+      Prism.highlightAll();
     }
-  }, [code])
+  }, [code]);
 
   const handleGenerate = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setError("")
-    setIsLoading(true)
+    event.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-    const formData = new FormData(event.currentTarget)
-    const prompt = formData.get("prompt") as string
+    const formData = new FormData(event.currentTarget);
+    const prompt = formData.get("prompt") as string;
 
     if (!prompt || !prompt.trim()) {
-      setError("Please enter a valid prompt")
-      setIsLoading(false)
-      return
+      setError("Please enter a valid prompt");
+      setIsLoading(false);
+      return;
     }
 
     try {
-      const result = await generateCode(prompt, codeType)
+      const result = await generateCode(prompt, codeType);
 
       if (result.error) {
-        setError(result.error)
+        setError(result.error);
       } else if (result.code) {
-        const cleanedCode = result.code.trim()
-        setCode(cleanedCode)
-        
+        const cleanedCode = result.code.trim();
+        setCode(cleanedCode);
+
         if (codeType === "react") {
           setPreview(`
             <!DOCTYPE html>
@@ -73,28 +73,31 @@ export function CodeCreator() {
                 </script>
               </body>
             </html>
-          `)
+          `);
         } else {
-          setPreview(cleanedCode)
+          setPreview(cleanedCode);
         }
       }
     } catch (error) {
-      setError("An unexpected error occurred. Please try again.")
+      setError("An unexpected error occurred. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleReset = () => {
-    setCode("")
-    setPreview("")
-    setError("")
-  }
+    setCode("");
+    setPreview("");
+    setError("");
+  };
 
   return (
     <div className="container mx-auto p-6 grid gap-6">
       <Card className="p-6 bg-gray-900 text-white">
-        <Tabs defaultValue="react" onValueChange={(value) => setCodeType(value as "react" | "html")}>
+        <Tabs
+          defaultValue="react"
+          onValueChange={(value) => setCodeType(value as "react" | "html")}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="react">React Component</TabsTrigger>
             <TabsTrigger value="html">HTML & CSS</TabsTrigger>
@@ -114,8 +117,14 @@ export function CodeCreator() {
                 />
               </div>
               <div className="flex gap-2">
-                <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   Generate Component
                 </Button>
                 <Button
@@ -145,8 +154,14 @@ export function CodeCreator() {
                 />
               </div>
               <div className="flex gap-2">
-                <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   Generate HTML & CSS
                 </Button>
                 <Button
@@ -184,14 +199,20 @@ export function CodeCreator() {
           <h2 className="text-lg font-semibold mb-4">Live Preview</h2>
           <div className="border border-gray-700 rounded-lg p-4 h-[400px] overflow-auto bg-white">
             {preview ? (
-              <iframe srcDoc={preview} title="Preview" className="w-full h-full border-0" sandbox="allow-scripts" />
+              <iframe
+                srcDoc={preview}
+                title="Preview"
+                className="w-full h-full border-0"
+                sandbox="allow-scripts"
+              />
             ) : (
-              <div className="text-gray-400 text-center mt-20">Preview will appear here...</div>
+              <div className="text-gray-400 text-center mt-20">
+                Preview will appear here...
+              </div>
             )}
           </div>
         </Card>
       </div>
     </div>
-  )
+  );
 }
-
